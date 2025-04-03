@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { produce } from "immer";
 
 // État initial du store
 const initialState = [];
@@ -10,18 +11,18 @@ const todoSlice = createSlice({
   reducers: {
     // Action pour ajouter une tâche
     addTodo: (state, action) => {
-      return [
-        ...state,
-        { id: Date.now(), texte: action.payload, completed: false },
-      ];
+      state.push({
+        id: Date.now(),
+        texte: action.payload,
+        completed: false,
+      });
     },
     // Action pour marquer une tâche comme terminée
     toggleTodo: (state, action) => {
-      return state.map((todo) =>
-        todo.id === action.payload
-          ? { ...todo, completed: !todo.completed }
-          : todo
-      );
+      const todo = state.find((t) => t.id === action.payload);
+      if (todo) {
+        todo.completed = !todo.completed;
+      }
     },
   },
 });
